@@ -10,14 +10,11 @@ from label_correction import *
 from face_detection import *
 
 if __name__ == "__main__":
-    # applique
-    # trombi()
+
+    # createTrombi()
     # print("Trombinoscope saved")
-    # detecte_visages()
+    # detectFaces()
     # print("detect visage terminé")
-    with open('saves\\net', 'rb') as entree:
-        net = pickle.load(entree)
-    printGraph(net)
     nameCorrection()
     with open('saves\\net', 'rb') as entree:
         net = pickle.load(entree)

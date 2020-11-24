@@ -5,12 +5,27 @@ from pyvis.network import Network
 import pickle
 import networkx as nx
 from face_detection import nameTransform,drawLabels
+import numpy as np
 
-def entrerNom(known_face_names,face_distances,i):
+
+#INPUT:
+#known_face_names : faces existing
+#face_distances : distances between faces from trombinoscope and faces detected
+#
+#OUTPUT
+#nom : a name (or Unknown) in the trombinoscope manually chosen for the shown face
+def entrerNom(known_face_names,face_distances):
     while 1:
-        for j in range(len(known_face_names)):
+        min_list = np.array(sorted(zip(range(len(face_distances)), face_distances), key=lambda t: t[1])[:4])
+
+        print(min_list)
+
+        for jfloat in np.flip(min_list[:,0])    :
+            j = int(jfloat)
             print(known_face_names[j])
-            print(face_distances[i][j])
+            print("Probabilité : " + str(1-face_distances[j]))
+            print("")
+
         nom = input("Entrez le nom de la personne (avec un . à la place de l'espace)\n")
         if nom == "Unknown":
             cv2.destroyWindow("visage")
@@ -23,6 +38,11 @@ def entrerNom(known_face_names,face_distances,i):
             print("Wrong name, try again\n")
     return nom
 
+#INPUT:
+#None
+#
+#OUTPUT
+#Make the user correct the different labellization of people, correct the saves, the graph and the pictures
 def nameCorrection():
     with open('saves\\net', 'rb') as entree:
         net = pickle.load(entree)
@@ -58,13 +78,11 @@ def nameCorrection():
             cv2.namedWindow("visage", cv2.WINDOW_NORMAL)
             cv2.imshow("visage", img)
 
-            key = cv2.waitKey()
-            print(face_names)
-
+            key = cv2.waitKey(0)
             #Si l'identification est mauvaise
             if key == 110:
                 #Entrée du nouveau nom
-                nom = entrerNom(known_face_names,face_distances,i)
+                nom = entrerNom(known_face_names,face_distances[i])
                 #Supression de l'edge si il existe
 
                 if name != "Unknown" and name != image:

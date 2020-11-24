@@ -11,7 +11,11 @@ from label_correction import *
 
 
 
-
+#INPUT:
+#name : name of a a picture (prenom.nom.jpg)
+#
+#OUTPUT
+#rep : adapted name (prenom_nom)
 def nameTransform(name):
     if name == "Unknown":
         return name
@@ -19,32 +23,52 @@ def nameTransform(name):
     rep = rep.replace(".","_")
     return rep
 
+
+#INPUT:
+#graph : the graph to print
+#
+#OUTPUT
+#print the graph
 def printGraph(graph):
     net = Network("1000px", "1000px",directed=True)
     net.from_nx(graph)
-    # Create data of neigbours
+    # Create data of neighbours
     neighbor_map = net.get_adj_list()
     for node in net.nodes:
         node["title"] += " neighbors:<br>" + "<br>".join(neighbor_map[node["id"]])
         node["value"] = 1
     net.show("graph\graphe.html")
 
-def drawLabels(img,face_locations,face_names,image_out):
+
+#INPUT:
+#img : screen with people
+#face_locations : locations of the faces
+#face_names : actual names of the faces
+#image_out : name of the output screen
+#
+#OUTPUT
+#save and return the photo with laballed faces
+def drawLabels(img,face_locations,face_names,image_out,save = True):
     for i in range(len(face_locations)):
         top, right, bottom, left = face_locations[i]
         name = face_names[i]
-
         # Draw a box around the face
         cv2.rectangle(img, (left, top), (right, bottom), (0, 0, 255), 2)
-
         # Draw a label with a name below the face
         cv2.rectangle(img, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
         font = cv2.FONT_HERSHEY_DUPLEX
         cv2.putText(img, nameTransform(name), (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
-    cv2.imwrite(image_out, img)
+    if save:
+        cv2.imwrite(image_out, img)
     return img
 
-def trombi():
+#INPUT:
+#None
+#
+#OUTPUT
+#Create and save the laballed representations of everybody
+#Create and save the graph of people
+def createTrombi():
     net = nx.DiGraph()
     known_face_encodings = []
     known_face_names = []
@@ -66,7 +90,14 @@ def trombi():
     with open('saves\\known_face_names.txt', 'wb') as output:
         pickle.dump(known_face_names, output, pickle.HIGHEST_PROTOCOL)
 
-def detecte_visages():
+
+#INPUT:
+#None
+#
+#OUTPUT
+#Create and save the laballed representations of everybody on the photos containing several people
+#Edit and save the graph of link between people appearing on the same photo
+def detectFaces():
 
     # Charge les embeddings des visages connus
     with open('saves\\net', 'rb') as entree:
