@@ -11,6 +11,7 @@ from label_correction import *
 
 
 
+
 #INPUT:
 #name : name of a a picture (prenom.nom.jpg)
 #
@@ -24,20 +25,8 @@ def nameTransform(name):
     return rep
 
 
-#INPUT:
-#graph : the graph to print
-#
-#OUTPUT
-#print the graph
-def printGraph(graph):
-    net = Network("1000px", "1000px",directed=True)
-    net.from_nx(graph)
-    # Create data of neighbours
-    neighbor_map = net.get_adj_list()
-    for node in net.nodes:
-        node["title"] += " neighbors:<br>" + "<br>".join(neighbor_map[node["id"]])
-        node["value"] = 1
-    net.show("graph\graphe.html")
+
+
 
 
 #INPUT:
@@ -157,8 +146,5 @@ def detectFaces():
 
     with open('saves\\net', 'wb') as output:
         pickle.dump(net, output, pickle.HIGHEST_PROTOCOL)
-
-    printGraph(net)
-
 
 

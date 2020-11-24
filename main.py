@@ -5,7 +5,7 @@ import face_recognition
 from pyvis.network import Network
 import pickle
 import networkx as nx
-
+from graph_model import *
 from label_correction import *
 from face_detection import *
 
@@ -15,7 +15,7 @@ if __name__ == "__main__":
     # print("Trombinoscope saved")
     # detectFaces()
     # print("detect visage terminé")
-    nameCorrection()
+    # nameCorrection()
     with open('saves\\net', 'rb') as entree:
         net = pickle.load(entree)
     printGraph(net)
