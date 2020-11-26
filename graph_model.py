@@ -8,6 +8,37 @@ import numpy as np
 import pandas as pd
 
 
+
+
+
+def nameTransform(name):
+    if name == "Unknown":
+        return name
+    rep = name[:-4]
+    rep = rep.replace(".","_")
+    return rep
+
+
+
+
+
+def rebuildGraph():
+    graph = nx.MultiDiGraph()
+    with open('saves\\known_face_names.txt', 'rb') as entree:
+        known_face_names = pickle.load(entree)
+    for nom in known_face_names:
+        graph.add_node(nameTransform(nom), size="5", title=nom)
+
+    for image in os.listdir('photo_AP'):
+        with open('saves\\Recognition\\' + nameTransform(image) + 'face_names', 'rb') as entree:
+            face_names = pickle.load(entree)
+        for n1 in face_names:
+            if n1 != "Unknown" and n1 != image:
+                graph.add_edge(nameTransform(n1),nameTransform(image), weight=1.,color = "black",title = "Same AP photo")
+
+    return graph
+
+
 #INPUT:
 #name : a name (prenom_nom)
 #
@@ -15,6 +46,27 @@ import pandas as pd
 #return the name in a more beautiful version with the caps
 def prettyName(name):
     return name.replace('_',' ').replace('.',' ').title()
+
+
+
+
+#INPUT:
+#line : a line representing a person
+#node : the node to modify
+#
+#OUTPUT
+#return the modified node to print the binets
+def addSectionNodes(graph,data):
+    nodes_values = []
+    for node in graph.nodes:
+        nodes_values.append(data[data["nom"] == node.replace("_", ".")])
+    for i,node in enumerate(nodes_values):
+        for j,node2 in enumerate(nodes_values):
+            if i != j and node["section"].values[0] == node2["section"].values[0]:
+                graph.add_edge(node["nom"].values[0].replace(".", "_"),node2["nom"].values[0].replace(".", "_"),
+                               weight=1.,color = "blue",hidden = False,physics = False, title = "Same section")
+    return graph
+
 
 
 #INPUT:
@@ -58,11 +110,10 @@ def displayBinets(line,node):
 #
 #OUTPUT
 #print the graph
-def printGraph(graph):
-    net = Network("800px", "1400px",directed=True)
+def printGraph(graph,data):
+    net = Network("500px", "500px",directed=True)
     net.from_nx(graph)
     #import data of people
-    data = pd.read_csv("donnees.csv",sep=';', encoding='latin-1')
     # Create data of neighbours
     # neighbor_map = net.get_adj_list()
     for node in net.nodes:
@@ -80,6 +131,6 @@ def printGraph(graph):
                          "highlight": {"background":colorOfPromotion(line,selected = True),
                                        "border":"black"}}
         node["borderWidth"] = 3
-    for edge in net.edges:
-        edge["color"] = "blue"
+    net.set_edge_smooth('dynamic')
+    #net.show_buttons()
     net.show("graph\graphe.html")

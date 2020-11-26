@@ -15,7 +15,10 @@ if __name__ == "__main__":
     # print("Trombinoscope saved")
     # detectFaces()
     # print("detect visage terminé")
-    # nameCorrection()
-    with open('saves\\net', 'rb') as entree:
-        net = pickle.load(entree)
-    printGraph(net)
+    #nameCorrection()
+    # with open('saves\\net', 'rb') as entree:
+    #     net = pickle.load(entree)
+    data = pd.read_csv("donnees.csv",sep=';', encoding='latin-1')
+    net = rebuildGraph()
+    addSectionNodes(net,data)
+    printGraph(net,data)

@@ -58,7 +58,7 @@ def drawLabels(img,face_locations,face_names,image_out,save = True):
 #Create and save the laballed representations of everybody
 #Create and save the graph of people
 def createTrombi():
-    net = nx.DiGraph()
+    net = nx.MultiDiGraph()
     known_face_encodings = []
     known_face_names = []
 
@@ -134,7 +134,7 @@ def detectFaces():
         # add edges to the graph
         for n1 in face_names:
             if n1 != "Unknown" and n1 != image:
-                net.add_edge(nameTransform(n1),nameTransform(image), weight=1.)
+                net.add_edge(nameTransform(n1),nameTransform(image), weight=1.,color = "black")
 
         # Inverse les Bleus et Rouges pour passer du RGB au BGR (pour fonctionner avec cv2)
         for i in range(len(img)):
