@@ -57,12 +57,14 @@ def drawLabels(img,face_locations,face_names,image_out,save = True):
 #OUTPUT
 #Create and save the laballed representations of everybody
 #Create and save the graph of people
-def createTrombi():
+def createTrombi(count = False):
     net = nx.MultiDiGraph()
     known_face_encodings = []
     known_face_names = []
-
-    for element in os.listdir('trombi'):
+    n = len(os.listdir('trombi'))
+    for i,element in enumerate(os.listdir('trombi')):
+        if count:
+            print(str(i) +"/" + str(n))
         nom = nameTransform(element)
         known_face_names.append(element)
         known_image = face_recognition.load_image_file('trombi' + '\\' + element)
@@ -86,7 +88,7 @@ def createTrombi():
 #OUTPUT
 #Create and save the laballed representations of everybody on the photos containing several people
 #Edit and save the graph of link between people appearing on the same photo
-def detectFaces():
+def detectFaces(count = False):
 
     # Charge les embeddings des visages connus
     with open('saves\\net', 'rb') as entree:
@@ -95,10 +97,11 @@ def detectFaces():
         known_face_encodings = pickle.load(entree)
     with open('saves\\known_face_names.txt', 'rb') as entree:
         known_face_names = pickle.load(entree)
-
+    n = len(os.listdir('photo_AP'))
     #cherche les visages sur chaque photo AP
-    for image in os.listdir('photo_AP'):
-
+    for i,image in enumerate(os.listdir('photo_AP')):
+        if count:
+            print(str(i) + "/" + str(n))
         # on charge l'image en mémoire
         img = face_recognition.load_image_file('photo_AP' + '\\' +image)
         image_out = 'AP_labelled' + '\\' + "labelled_"+ image

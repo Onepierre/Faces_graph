@@ -134,3 +134,21 @@ def printGraph(graph,data):
     net.set_edge_smooth('dynamic')
     #net.show_buttons()
     net.show("graph\graphe.html")
+
+def printGraphNoData(graph):
+    net = Network("800px", "800px",directed=True)
+    net.from_nx(graph)
+    #import data of people
+    # Create data of neighbours
+    # neighbor_map = net.get_adj_list()
+    for node in net.nodes:
+        node["title"] = node["id"]
+        node["value"] = 1
+        node["color"] = {"background":"red",
+                         "border":"black",
+                         "highlight": {"background":"red",
+                                       "border":"black"}}
+        node["borderWidth"] = 3
+    #net.set_edge_smooth('dynamic')
+    #net.show_buttons()
+    net.show("graph\graphe.html")
