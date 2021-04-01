@@ -27,7 +27,7 @@ def rebuildGraph():
     with open('saves\\known_face_names.txt', 'rb') as entree:
         known_face_names = pickle.load(entree)
     for nom in known_face_names:
-        graph.add_node(nameTransform(nom), size="5", title=nom)
+        graph.add_node(nameTransform(nom), size=1, title=nom)
 
     for image in os.listdir('photo_AP'):
         with open('saves\\Recognition\\' + nameTransform(image) + 'face_names', 'rb') as entree:
@@ -132,6 +132,7 @@ def printGraph(graph,data):
                                        "border":"black"}}
         node["borderWidth"] = 3
     net.set_edge_smooth('dynamic')
+
     #net.show_buttons()
     net.show("graph\graphe.html")
 
@@ -148,7 +149,8 @@ def printGraphNoData(graph):
                          "border":"black",
                          "highlight": {"background":"red",
                                        "border":"black"}}
-        node["borderWidth"] = 3
+        node["borderWidth"] = 1
     #net.set_edge_smooth('dynamic')
+    net.barnes_hut()
     #net.show_buttons()
     net.show("graph\graphe.html")

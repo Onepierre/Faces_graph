@@ -5,7 +5,7 @@ import face_recognition
 from pyvis.network import Network
 import pickle
 import networkx as nx
-
+import time
 from label_correction import *
 
 
@@ -89,7 +89,7 @@ def createTrombi(count = False):
 #Create and save the laballed representations of everybody on the photos containing several people
 #Edit and save the graph of link between people appearing on the same photo
 def detectFaces(count = False):
-
+    t0 = time.time()
     # Charge les embeddings des visages connus
     with open('saves\\net', 'rb') as entree:
         net = pickle.load(entree)
@@ -101,7 +101,19 @@ def detectFaces(count = False):
     #cherche les visages sur chaque photo AP
     for i,image in enumerate(os.listdir('photo_AP')):
         if count:
-            print(str(i) + "/" + str(n))
+            text1= str(i) + "/" + str(n)
+            t1 = time.time()
+            if i>0:
+                tps = time.gmtime((t1-t0))
+                text2 = str(tps[3]) + " h " + str(tps[4]) + " min " \
+                        + str(tps[5]) + " sec " + "effectuées."
+                tps2 = (t1-t0)*n/i
+                tps = time.gmtime(tps2 - (t1 - t0))
+                text3=str(tps[3]) +" h "+str(tps[4]) +" min "+str(tps[5]) +" sec " +"restantes."
+                text4 = "-------------------------------------------"
+                print(text1 +"\n" +text2 +"\n" +text3 +"\n" + text4, end="\r")
+            else:
+                print(text1, end = "\r")
         # on charge l'image en mémoire
         img = face_recognition.load_image_file('photo_AP' + '\\' +image)
         image_out = 'AP_labelled' + '\\' + "labelled_"+ image
@@ -114,16 +126,17 @@ def detectFaces(count = False):
         # Cherche à identifier chaque visage
         for face_encoding in face_encodings:
             # See if the face is a match for the known face(s)
-            matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
+            #matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
+            t_face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
+            min = sorted(zip(range(len(t_face_distances)), t_face_distances), key=lambda t: t[1])[0]
+
             name = "Unknown"
 
-            if True in matches:
-                first_match_index = matches.index(True)
-                name = known_face_names[first_match_index]
+            if min[1]<0.5:
+                name = known_face_names[min[0]]
 
-            face_distance = face_recognition.face_distance(known_face_encodings, face_encoding)
             face_names.append(name)
-            face_distances.append(face_distance)
+            face_distances.append(t_face_distances)
 
         with open('saves\\Recognition\\' + nameTransform(image) +'face_distances', 'wb') as output:
             pickle.dump(face_distances, output, pickle.HIGHEST_PROTOCOL)

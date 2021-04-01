@@ -22,15 +22,15 @@ def rename():
 if __name__ == "__main__":
 
     # rename()
-    #createTrombi(count = True)
-    #print("Trombinoscope saved")
-    # detectFaces(count = True)
-    # print("detect visage terminé")
-    nameCorrection()
+    # createTrombi(count = True)
+    # # print("Trombinoscope saved")
+    #detectFaces(count = True)
+    #print("detect visage terminé")
+    nameCorrection(178)
 
     with open('saves\\net', 'rb') as entree:
         net = pickle.load(entree)
-    data = pd.read_csv("donnees.csv",sep=';', encoding='latin-1')
-    net = rebuildGraph()
-    #addSectionNodes(net,data)
-    #printGraphNoData(net)
+    #data = pd.read_csv("donnees.csv",sep=';', encoding='latin-1')
+    #     # net = rebuildGraph()
+    #     # #addSectionNodes(net,data)
+    #     # printGraphNoData(net)
